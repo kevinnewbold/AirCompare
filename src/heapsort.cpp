@@ -1,7 +1,3 @@
-#include <vector>
-#include "listing.h"
-using namespace std;
-
 void heapifyDown(vector<pair<Listing,double>> &heap, int size, int root) {
 
     // Sets the "left" node and "right" node from the inputted "root"

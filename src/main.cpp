@@ -1,6 +1,8 @@
 #pragma once
 #include  <SFML/Graphics.hpp>
 #include "listing.h"
+#include "data.h"
+#include "heapsort.h"
 #include <iostream>
 #include <filesystem>
 
@@ -163,9 +165,8 @@ public:
     //      Price: [price], Longitude: [latitude], Latitude: [latitude]
     Result(int place, Listing l, sf::Font& font)
     {
-        std::cout << place + ". " + l.name;
         sf::Text one(std::to_string(place) + ". " + l.name, font, 16);
-        sf::Text two(std::string("Price: ") + std::to_string(l.price) + std::string(", Longitude: ") + std::to_string(l.longitude) + ", Latitude: " + std::to_string(l.latitude) + ", " + l.city + ", " + l.state, font, 14);
+        sf::Text two(std::string("Price: ") + l.price + std::string(", Longitude: ") + l.longitude + ", Latitude: " + l.latitude + ", " + l.city + ", " + l.state, font, 14);
         lineOne = one;
         lineTwo = two;
         setText(lineOne, 670.0f, 100 + place * 50, sf::Color::Black);
@@ -240,11 +241,12 @@ namespace fs = std::filesystem;
 
 int main(int argc, char* argv[])
 {
+    // code from: https://stackoverflow.com/questions/70474834/i-cant-load-my-game-resources-into-sfml-with-cmake
     fs::path path(fs::canonical(argv[0]));
     fs::path font1 = path.parent_path() / "Roboto-Regular.ttf";
-    fs::path font = path.parent_path() / "Roboto-Bold.ttf";
-    std::string font1Path{ path.u8string() };
-    std::string font2Path{ path.u8string() };
+    fs::path font2 = path.parent_path() / "Roboto-Bold.ttf";
+    std::string font1Path{ font1.u8string() };
+    std::string font2Path{ font2.u8string() };
 
     int windowHeight = 800;
     int windowWidth = 1000;
@@ -267,9 +269,9 @@ int main(int argc, char* argv[])
     if (!robotoRegular.loadFromFile(font1Path))
         std::cout << "error: sheeeesh";
     robotoRegular.loadFromFile("Roboto-Regular.ttf");
-    if (!robotoBold.loadFromFile("Roboto-Bold.ttf"))
+    if (!robotoBold.loadFromFile(font1Path))
         std::cout << "error: sheeesh";
-    robotoBold.loadFromFile("Roboto-Bold.ttf");
+    robotoBold.loadFromFile(font2Path);
 
     
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "AirCompare");
@@ -386,20 +388,11 @@ int main(int argc, char* argv[])
             // run sorts, get 10 results
             float timeTaken = 1.1f; // eventually with the timer function
             runButton.DisplayMessage("Computed in " + std::to_string(timeTaken) + " milliseconds.");
-            Listings topTen;
-            topTen.listings.push_back(Listing());
-            topTen.listings.push_back(Listing());
-            topTen.listings.push_back(Listing());
-            topTen.listings.push_back(Listing());
-            topTen.listings.push_back(Listing());
-            topTen.listings.push_back(Listing());
+            std::vector<Listing> topResults;
 
-            
-
-            for (int i = 0; i < topTen.listings.size(); i++)
+            for (int i = 0; i < topResults.size(); i++)
             {
-                std::cout << topTen.listings.at(i).name;
-                Result r(i + 1, topTen.listings.at(i), robotoRegular);
+                Result r(i + 1, topResults.at(i), robotoRegular);
                 resultList.push_back(r);
             }
 
