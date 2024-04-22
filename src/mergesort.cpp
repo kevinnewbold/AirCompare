@@ -1,11 +1,13 @@
+
 #include <vector>
+#include <utility>
 using namespace std;
 
-void merge(vector<double>& vec, int start, int mid, int end) {
+void merge(vector<pair<int, double>>& vec, int start, int mid, int end) {
     int sizeLeft = mid - start + 1;
     int sizeRight = end - mid;
-    vector<double> leftSubvec(sizeLeft);
-    vector<double> rightSubvec(sizeRight);
+    vector<pair<int, double>> leftSubvec(sizeLeft);
+    vector<pair<int, double>> rightSubvec(sizeRight);
 
     for (int i = 0; i < sizeLeft; i++)
         leftSubvec[i] = vec[start + i];
@@ -17,7 +19,7 @@ void merge(vector<double>& vec, int start, int mid, int end) {
     int mergedIndex = start;
 
     while (leftIndex < sizeLeft && rightIndex < sizeRight) {
-        if (leftSubvec[leftIndex] <= rightSubvec[rightIndex]) {
+        if (leftSubvec[leftIndex].second <= rightSubvec[rightIndex].second) {
             vec[mergedIndex++] = leftSubvec[leftIndex++];
         } else {
             vec[mergedIndex++] = rightSubvec[rightIndex++];
@@ -33,7 +35,7 @@ void merge(vector<double>& vec, int start, int mid, int end) {
     }
 }
 
-void recursiveMergeSort(vector<double>& vec, int start, int end) {
+void recursiveMergeSort(vector<pair<int, double>>& vec, int start, int end) {
     if (start < end) {
         int mid = start + (end - start) / 2;
         recursiveMergeSort(vec, start, mid);
@@ -42,6 +44,6 @@ void recursiveMergeSort(vector<double>& vec, int start, int end) {
     }
 }
 
-void mergeSort(vector<double>& vec) {
+void mergeSort(vector<pair<int, double>>& vec) {
     recursiveMergeSort(vec, 0, vec.size() - 1);
 }
