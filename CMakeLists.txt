@@ -10,7 +10,17 @@ FetchContent_Declare(SFML
     GIT_TAG 2.6.x)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(aircompare src/main.cpp)
+file(GLOB SOURCES
+    src/data.h
+    src/data.cpp
+    src/heapsort.h
+    src/heapsort.cpp
+    src/listing.h
+    src/listing.cpp
+    src/main.cpp
+)
+
+add_executable(aircompare ${SOURCES})
 target_link_libraries(aircompare PRIVATE sfml-graphics)
 target_compile_features(aircompare PRIVATE cxx_std_17)
 
