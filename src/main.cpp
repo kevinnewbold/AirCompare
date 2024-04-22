@@ -245,8 +245,13 @@ int main(int argc, char* argv[])
     fs::path path(fs::canonical(argv[0]));
     fs::path font1 = path.parent_path() / "Roboto-Regular.ttf";
     fs::path font2 = path.parent_path() / "Roboto-Bold.ttf";
+    fs::path data = path.parent_path() / "airbnb_listings_usa.csv";
     std::string font1Path{ font1.u8string() };
     std::string font2Path{ font2.u8string() };
+    std::string listingsPath{ data.u8string() };
+
+    // read data
+    std::vector<std::pair<Listing, double>> listings = readData("airbnb_listings_usa.csv");
 
     int windowHeight = 800;
     int windowWidth = 1000;
@@ -306,8 +311,8 @@ int main(int argc, char* argv[])
     Checkbox mergeSort(170.0f, 470.0f, "Merge Sort?", robotoRegular);
     interactables.emplace_back(&mergeSort);
 
-    Checkbox heapSort(170.0f, 500.0f, "Heap Sort?", robotoRegular);
-    interactables.emplace_back(&heapSort);
+    Checkbox heapSortBtn(170.0f, 500.0f, "Heap Sort?", robotoRegular);
+    interactables.emplace_back(&heapSortBtn);
 
     // run
     RunButton runButton(windowWidth / 4.4f, 700.0f, "GO!", robotoBold);
@@ -367,10 +372,10 @@ int main(int argc, char* argv[])
                             selected = interactables.at(i);
                             if (interactables.at(i) == &mergeSort)
                             {
-                                if (heapSort.selected)
-                                    heapSort.OnClick();
+                                if (heapSortBtn.selected)
+                                    heapSortBtn.OnClick();
                             }
-                            if (interactables.at(i) == &heapSort)
+                            if (interactables.at(i) == &heapSortBtn)
                             {
                                 if (mergeSort.selected)
                                     mergeSort.OnClick();
@@ -385,14 +390,21 @@ int main(int argc, char* argv[])
         if (runButton.running)
         {
             runButton.running = false;
-            // run sorts, get 10 results
+            getDifferences(listings, std::stod(runButton.price), std::stod(runButton.longitude), std::stod(runButton.latitude));
+            if (merge)
+            {
+
+            }
+            else
+            {
+                heapSort(listings, listings.size());
+            }
             float timeTaken = 1.1f; // eventually with the timer function
             runButton.DisplayMessage("Computed in " + std::to_string(timeTaken) + " milliseconds.");
-            std::vector<Listing> topResults;
 
-            for (int i = 0; i < topResults.size(); i++)
+            for (int i = 0; i < 10; i++)
             {
-                Result r(i + 1, topResults.at(i), robotoRegular);
+                Result r(i + 1, listings.at(i).first, robotoRegular);
                 resultList.push_back(r);
             }
 
