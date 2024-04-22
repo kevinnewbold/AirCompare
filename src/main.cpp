@@ -3,6 +3,7 @@
 #include "listing.h"
 #include "data.h"
 #include "heapsort.h"
+#include "mergesort.h"
 #include <iostream>
 #include <filesystem>
 
@@ -309,8 +310,8 @@ int main(int argc, char* argv[])
 
     // selection boxes
 
-    Checkbox mergeSort(170.0f, 470.0f, "Merge Sort?", robotoRegular);
-    interactables.emplace_back(&mergeSort);
+    Checkbox mergeSortBtn(170.0f, 470.0f, "Merge Sort?", robotoRegular);
+    interactables.emplace_back(&mergeSortBtn);
 
     Checkbox heapSortBtn(170.0f, 500.0f, "Heap Sort?", robotoRegular);
     interactables.emplace_back(&heapSortBtn);
@@ -320,7 +321,7 @@ int main(int argc, char* argv[])
     interactables.emplace_back(&runButton);
 
     // starts the program out with a default of 'mergeSort'
-    mergeSort.OnClick();
+    mergeSortBtn.OnClick();
 
     sf::Event event;
 
@@ -370,7 +371,7 @@ int main(int argc, char* argv[])
                             interactables.at(i)->OnClick();
                             interactables.at(i)->Select();
                             selected = interactables.at(i);
-                            if (interactables.at(i) == &mergeSort)
+                            if (interactables.at(i) == &mergeSortBtn)
                             {
                                 if (heapSortBtn.selected)
                                 {
@@ -381,9 +382,9 @@ int main(int argc, char* argv[])
                             }
                             if (interactables.at(i) == &heapSortBtn)
                             {
-                                if (mergeSort.selected)
+                                if (mergeSortBtn.selected)
                                 {
-                                    mergeSort.OnClick();
+                                    mergeSortBtn.OnClick();
                                     merge = false;
                                 }
                             }
@@ -403,7 +404,7 @@ int main(int argc, char* argv[])
             getDifferences(listings, std::stod(runButton.price), std::stod(runButton.longitude), std::stod(runButton.latitude));
             if (merge)
             {
-
+                mergeSort(listings);
             }
             else
             {
@@ -411,21 +412,22 @@ int main(int argc, char* argv[])
             }
             auto end = std::chrono::high_resolution_clock::now();
             float timeTaken = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-            runButton.DisplayMessage("Computed in " + std::to_string(timeTaken) + " milliseconds.");
+            runButton.DisplayMessage("Duration: " + std::to_string(timeTaken) + " milliseconds.");
 
             int count = 0;
+
             if (!runButton.state.empty())
             {
                 while (resultList.size() < 10)
                 {
                     if (listings.at(count).first.state == runButton.state)
                     {
-                        std::cout << listings.at(count).first.name;
-                        std::cout << resultList.size();
-                        Result r(count + 1, listings.at(count).first, robotoRegular, robotoBold);
+                        Result r(resultList.size() + 1, listings.at(count).first, robotoRegular, robotoBold);
                         resultList.push_back(r);
                     }
                     count++;
+                    if (count >= listings.size())
+                        break;
                 }
             }
             else

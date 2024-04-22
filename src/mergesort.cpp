@@ -1,13 +1,13 @@
-
+#include "mergesort.h"
 #include <vector>
 #include <utility>
 using namespace std;
 
-void merge(vector<pair<int, double>>& vec, int start, int mid, int end) {
+void merge(vector<pair<Listing, double>>& vec, int start, int mid, int end) {
     int sizeLeft = mid - start + 1;
     int sizeRight = end - mid;
-    vector<pair<int, double>> leftSubvec(sizeLeft);
-    vector<pair<int, double>> rightSubvec(sizeRight);
+    vector<pair<Listing, double>> leftSubvec(sizeLeft);
+    vector<pair<Listing, double>> rightSubvec(sizeRight);
 
     for (int i = 0; i < sizeLeft; i++)
         leftSubvec[i] = vec[start + i];
@@ -35,7 +35,7 @@ void merge(vector<pair<int, double>>& vec, int start, int mid, int end) {
     }
 }
 
-void recursiveMergeSort(vector<pair<int, double>>& vec, int start, int end) {
+void recursiveMergeSort(vector<pair<Listing, double>>& vec, int start, int end) {
     if (start < end) {
         int mid = start + (end - start) / 2;
         recursiveMergeSort(vec, start, mid);
@@ -44,6 +44,6 @@ void recursiveMergeSort(vector<pair<int, double>>& vec, int start, int end) {
     }
 }
 
-void mergeSort(vector<pair<int, double>>& vec) {
+void mergeSort(vector<pair<Listing, double>>& vec) {
     recursiveMergeSort(vec, 0, vec.size() - 1);
 }

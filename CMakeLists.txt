@@ -15,6 +15,8 @@ file(GLOB SOURCES
     src/data.cpp
     src/heapsort.h
     src/heapsort.cpp
+    src/mergesort.h
+    src/mergesort.cpp
     src/listing.h
     src/listing.cpp
     src/main.cpp
