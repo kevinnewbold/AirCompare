@@ -214,7 +214,7 @@ public:
         }
         else
         {
-            error.setString("Error: invalid input. Make sure longitude, latitude, \n and price are numbers and are filled out.");
+            error.setString("Error: invalid input.");
         }
 
     }
