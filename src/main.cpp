@@ -462,9 +462,7 @@ int main(int argc, char* argv[])
         {
             resultList.at(i).Draw(window);
         }
-
         window.display();
     }
-
     return 0;
 }
