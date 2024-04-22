@@ -399,6 +399,7 @@ int main(int argc, char* argv[])
             resultList.clear();
             runButton.running = false;
             runButton.Draw(window);
+            auto start = std::chrono::high_resolution_clock::now();
             getDifferences(listings, std::stod(runButton.price), std::stod(runButton.longitude), std::stod(runButton.latitude));
             if (merge)
             {
@@ -408,8 +409,8 @@ int main(int argc, char* argv[])
             {
                 heapSort(listings, listings.size());
             }
-
-            float timeTaken = 1.1f; // eventually with the timer function
+            auto end = std::chrono::high_resolution_clock::now();
+            float timeTaken = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
             runButton.DisplayMessage("Computed in " + std::to_string(timeTaken) + " milliseconds.");
 
             int count = 0;
