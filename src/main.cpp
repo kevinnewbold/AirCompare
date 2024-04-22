@@ -163,14 +163,14 @@ public:
     // Displays like:
     // 1. [listing name]
     //      Price: [price], Longitude: [latitude], Latitude: [latitude]
-    Result(int place, Listing l, sf::Font& font)
+    Result(int place, Listing l, sf::Font& font, sf::Font& font2)
     {
-        sf::Text one(std::to_string(place) + ". " + l.name, font, 16);
+        sf::Text one(std::to_string(place) + ". " + l.name, font2, 18);
         sf::Text two(std::string("Price: ") + l.price + std::string(", Longitude: ") + l.longitude + ", Latitude: " + l.latitude + ", " + l.city + ", " + l.state, font, 14);
         lineOne = one;
         lineTwo = two;
         setText(lineOne, 670.0f, 100 + place * 50, sf::Color::Black);
-        setText(lineTwo, 690.0f, 100 + place * 50 + 18, sf::Color::Black);
+        setText(lineTwo, 690.0f, 100 + place * 50 + 20, sf::Color::Black);
     }
     void Draw(sf::RenderWindow& window)
     {
@@ -208,6 +208,7 @@ public:
         if (!price.empty() && !longitude.empty() && !latitude.empty())
         {
             running = true;
+            std::transform(state.begin(), state.end(), state.begin(), ::toupper);
             error.setString("Running...");
         }
         else
@@ -287,20 +288,20 @@ int main(int argc, char* argv[])
     setText(title, 150.0f, 100.0f, sf::Color::Black);
     setText(price, 150.0f, 200.0f, sf::Color::Black);
     setText(location, 150.0f, 300.0f, sf::Color::Black);
-    setText(results, 150.0f + windowWidth / 2.0f, 100.0f, sf::Color::Black);
+    setText(results, windowWidth / 1.50f, 100.0f, sf::Color::Black);
 
     sf::RectangleShape separationLine;
     separationLine.setSize(sf::Vector2f(1, windowHeight));
     separationLine.setOutlineColor(sf::Color::Black);
     separationLine.setOutlineThickness(1);
     separationLine.setFillColor(sf::Color::Black);
-    separationLine.setPosition(windowWidth / 2.2f, 1);
+    separationLine.setPosition(windowWidth / 3.0f, 1);
 
     // input boxes
-    TextBox priceBox(170.0f, 230.0f, "Dollars/night: ", robotoRegular, 15);
-    TextBox longitudeBox(170.0f, 330.0f, "Longitude: ", robotoRegular, 15);
-    TextBox latitudeBox(170.0f, 360.0f, "Latitude: ", robotoRegular, 15);
-    TextBox stateBox(170.0f, 390.0f, "State abbrv.: ", robotoRegular, 2);
+    TextBox priceBox(160.0f, 230.0f, "Dollars/night: ", robotoRegular, 15);
+    TextBox longitudeBox(160.0f, 330.0f, "Longitude: ", robotoRegular, 15);
+    TextBox latitudeBox(160.0f, 360.0f, "Latitude: ", robotoRegular, 15);
+    TextBox stateBox(160.0f, 390.0f, "State abbrv.: ", robotoRegular, 2);
     interactables.emplace_back(&priceBox);
     interactables.emplace_back(&longitudeBox);
     interactables.emplace_back(&latitudeBox);
@@ -315,12 +316,11 @@ int main(int argc, char* argv[])
     interactables.emplace_back(&heapSortBtn);
 
     // run
-    RunButton runButton(windowWidth / 4.4f, 700.0f, "GO!", robotoBold);
+    RunButton runButton(160.0f, 700.0f, "GO!", robotoBold);
     interactables.emplace_back(&runButton);
 
     // starts the program out with a default of 'mergeSort'
     mergeSort.OnClick();
-
 
     sf::Event event;
 
@@ -373,12 +373,19 @@ int main(int argc, char* argv[])
                             if (interactables.at(i) == &mergeSort)
                             {
                                 if (heapSortBtn.selected)
+                                {
                                     heapSortBtn.OnClick();
+                                    merge = true;
+                                }
+
                             }
                             if (interactables.at(i) == &heapSortBtn)
                             {
                                 if (mergeSort.selected)
+                                {
                                     mergeSort.OnClick();
+                                    merge = false;
+                                }
                             }
                             i = interactables.size();
                         }
@@ -389,7 +396,9 @@ int main(int argc, char* argv[])
 
         if (runButton.running)
         {
+            resultList.clear();
             runButton.running = false;
+            runButton.Draw(window);
             getDifferences(listings, std::stod(runButton.price), std::stod(runButton.longitude), std::stod(runButton.latitude));
             if (merge)
             {
@@ -399,15 +408,33 @@ int main(int argc, char* argv[])
             {
                 heapSort(listings, listings.size());
             }
+
             float timeTaken = 1.1f; // eventually with the timer function
             runButton.DisplayMessage("Computed in " + std::to_string(timeTaken) + " milliseconds.");
 
-            for (int i = 0; i < 10; i++)
+            int count = 0;
+            if (!runButton.state.empty())
             {
-                Result r(i + 1, listings.at(i).first, robotoRegular);
-                resultList.push_back(r);
+                while (resultList.size() < 10)
+                {
+                    if (listings.at(count).first.state == runButton.state)
+                    {
+                        std::cout << listings.at(count).first.name;
+                        std::cout << resultList.size();
+                        Result r(count + 1, listings.at(count).first, robotoRegular, robotoBold);
+                        resultList.push_back(r);
+                    }
+                    count++;
+                }
             }
-
+            else
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    Result r(i + 1, listings.at(i).first, robotoRegular, robotoBold);
+                    resultList.push_back(r);
+                }
+            }
 
         }
 

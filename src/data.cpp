@@ -25,7 +25,6 @@ vector<pair<Listing, double>> readData(const string& fileName) {
     while(getline(file, row)) {
         dataset.clear();
         stringstream s(row);
-
         while(getline(s, data, ',')) {
             comma = false;
             if (data[0] == '\"' && data[data.length() - 1] != '\"') {
@@ -33,8 +32,7 @@ vector<pair<Listing, double>> readData(const string& fileName) {
                     getline(s, data2, '\"');
                     data += data2;
                     getline(s, data2, ',');
-                    if (data2[data2.length() - 1] == '\"' || data2.length() == 0) {
-                        std::cout << "here";
+                    if (data2.length() == 0 || data2[data2.length() - 1] == '\"') {
                         comma = true;
                     }
                 }
@@ -47,8 +45,7 @@ vector<pair<Listing, double>> readData(const string& fileName) {
                                   dataset.at(20), dataset.at(19),
                                   dataset.at(7), dataset.at(8));
         airbnb.first = listing;
-        airbnb.second = -1000000000;
-        std::cout << listing.name << std::endl;
+        airbnb.second = 0;
         differences.push_back(airbnb);
         
     }
@@ -58,6 +55,17 @@ vector<pair<Listing, double>> readData(const string& fileName) {
 void getDifferences(vector<pair<Listing, double>>& listings, double price, double longitude, double latitude)
 {
     for(int i = 0; i < listings.size(); i++)
+    {
+        double diff = (abs(latitude - stod(listings.at(i).first.latitude)) + abs(longitude - (stod(listings.at(i).first.longitude)))
+            + abs(price - stod(listings.at(i).first.price)));
+        listings.at(i).second = diff;
+    }
+}
+
+void getDifferences(vector<pair<Listing, double>>& listings, double price, double longitude, double latitude, string state)
+{
+
+    for (int i = 0; i < listings.size(); i++)
     {
         double diff = (abs(latitude - stod(listings.at(i).first.latitude)) + abs(longitude - (stod(listings.at(i).first.longitude)))
             + abs(price - stod(listings.at(i).first.price)));
